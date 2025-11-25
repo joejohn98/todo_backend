@@ -1,17 +1,20 @@
 import express from "express";
 import morgan from "morgan";
 import connectDB from "./db/db.js";
+import todosRouter from "./routes/todoRouter.js";
 
 const app = express();
 
 app.use(express.json());
 app.use(morgan("dev"));
 
+const PORT = process.env.PORT || 5000;
+
 app.get("/", (req, res) => {
   res.send("Todo API is running");
 });
 
-const PORT = process.env.PORT || 5000;
+app.use("/api/todos", todosRouter);
 
 const startServer = async () => {
   try {
