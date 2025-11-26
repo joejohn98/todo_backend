@@ -1,5 +1,10 @@
 import express from "express";
-import { allTodos, createTodo, updateTodo } from "../controllers/todoController.js";
+import {
+  allTodos,
+  createTodo,
+  deleteTodo,
+  updateTodo,
+} from "../controllers/todoController.js";
 
 const router = express.Router();
 
@@ -9,6 +14,6 @@ router.post("/create", createTodo);
 
 router.put("/update/:id", updateTodo);
 
-// router.delete("/delete/:id", );
+router.delete("/delete/:id", deleteTodo);
 
 export default router;

@@ -96,4 +96,42 @@ const updateTodo = async (req, res) => {
   }
 };
 
-export { allTodos, createTodo, updateTodo };
+const deleteTodo = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Todo ID is required",
+    });
+  }
+
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Invalid Todo ID format",
+    });
+  }
+
+  try {
+    const todo = await Todo.findByIdAndDelete(id);
+    if (!todo) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Todo not found",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      message: "Todo deleted successfully",
+    });
+  } catch (error) {
+    console.log("Error deleting todo", error);
+    res.status(500).json({
+      status: "error",
+      message: "failed to delete todo",
+    });
+  }
+};
+
+export { allTodos, createTodo, updateTodo, deleteTodo };
