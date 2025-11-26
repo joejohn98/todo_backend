@@ -1,4 +1,7 @@
+import mongoose from "mongoose";
 import Todo from "../models/todoModel.js";
+
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const allTodos = async (req, res) => {
   try {
@@ -43,5 +46,54 @@ const createTodo = async (req, res) => {
   }
 };
 
+const updateTodo = async (req, res) => {
+  const { id } = req.params;
+  const { isCompleted } = req.body;
 
-export { allTodos, createTodo };
+  if (!id) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Todo ID is required",
+    });
+  }
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Invalid Todo ID format",
+    });
+  }
+
+  if (isCompleted === undefined) {
+    return res.status(400).json({
+      status: "fail",
+      message: "isCompleted field is required",
+    });
+  }
+
+  try {
+    const todo = await Todo.findByIdAndUpdate(
+      id,
+      { isCompleted },
+      { new: true, runValidators: true }
+    );
+    if (!todo) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Todo not found",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      message: "Todo updated successfully",
+      todo,
+    });
+  } catch (error) {
+    console.log("Error updating todo", error);
+    res.status(500).json({
+      status: "error",
+      message: "failed to update todo",
+    });
+  }
+};
+
+export { allTodos, createTodo, updateTodo };
